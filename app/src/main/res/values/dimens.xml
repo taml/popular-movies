@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Padding / Margin / Radius -->
+    <dimen name="xsmall">4dp</dimen>
+    <dimen name="small">8dp</dimen>
+    <dimen name="rating_medium">12dp</dimen>
+    <dimen name="medium">16dp</dimen>
+    <dimen name="large">32dp</dimen>
+    <!-- Progress -->
+    <dimen name="progress_dimen">35dp</dimen>
+    <!-- Font Sizes -->
+    <dimen name="large_text">32sp</dimen>
+    <dimen name="primary_text_size">22sp</dimen>
+    <dimen name="secondary_text_size">18sp</dimen>
+</resources>
