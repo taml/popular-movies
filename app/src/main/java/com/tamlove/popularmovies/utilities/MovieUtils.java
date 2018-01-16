@@ -105,45 +105,34 @@ public class MovieUtils {
 
 
 
-    public static MovieExtra getSingleMovieFromJSON(String singleMovieJSONString) {
+    public static List<MovieTrailer> getMovieTrailersFromJSON(String movieTrailersJSONString) {
         // If the JSON string is empty or null, then return early.
-        if(TextUtils.isEmpty(singleMovieJSONString)){
+        if(TextUtils.isEmpty(movieTrailersJSONString)){
             return null;
         }
 
         // Create an empty ArrayList so that movie trailers can be added to it
         List<MovieTrailer> singleMovieTrailers = new ArrayList<>();
-        // Create an empty ArrayList so that movie reviews can be added to it
-        List<MovieReview> singleMovieReviews = new ArrayList<>();
-        final String TMDB_RESULTS = "results";
 
-        final String TMDB_VIDEOS = "videos";
+        final String TMDB_RESULTS = "results";
         final String TMDB_KEY = "key";
         final String TMDB_SITE = "site";
         final String TMDB_NAME = "name";
         final String TMDB_TYPE = "type";
-
-        final String TMDB_REVIEWS = "reviews";
-        final String TMDB_AUTHOR = "author";
-        final String TMDB_CONTENT = "content";
 
         String movieTrailerKey = "";
         String fullTrailerPath = "";
         String movieTrailerSite = "";
         String movieTrailerName = "";
         String movieTrailerType = "";
-        String movieReviewAuthor = "";
-        String movieReviewContent = "";
 
         try {
             // Create a base JSONObject
-            JSONObject movieJSON = new JSONObject(singleMovieJSONString);
+            JSONObject movieJSON = new JSONObject(movieTrailersJSONString);
 
             //Get the movie trailers JSON
-            // Extract the JSONObject associated with the key "videos"
-            JSONObject movieVideos = movieJSON.getJSONObject(TMDB_VIDEOS);
             // Extract the JSONArray associated with the key called "results"
-            JSONArray movieTrailerResults = movieVideos.getJSONArray(TMDB_RESULTS);
+            JSONArray movieTrailerResults = movieJSON.getJSONArray(TMDB_RESULTS);
             // For each extra in the movieResults array, create an {@link MovieTrailer} object
             for(int i = 0; i < movieTrailerResults.length(); i++){
                 // Get a single movie trailer at position i within the list of movie trailers / videos
@@ -179,20 +168,45 @@ public class MovieUtils {
                 singleMovieTrailers.add(movieTrailer);
             }
 
-            // Get the movie review JSON
-            // Extract the JSONObject associated with the key "reviews"
-            JSONObject movieReviews = movieJSON.getJSONObject(TMDB_REVIEWS);
+        } catch (JSONException e){
+            e.printStackTrace();
+            Log.e(LOG_TAG, "Problem printing the single movie trailers JSON results ", e);
+        }
+
+        // Return the list of movie trailers
+        return singleMovieTrailers;
+    }
+
+    public static List<MovieReview> getMovieReviewsFromJSON(String movieReviewsJSONString) {
+
+        // If the JSON string is empty or null, then return early.
+        if(TextUtils.isEmpty(movieReviewsJSONString)){
+            return null;
+        }
+
+        // Create an empty ArrayList so that movie reviews can be added to it
+        List<MovieReview> singleMovieReviews = new ArrayList<>();
+
+        final String TMDB_RESULTS = "results";
+        final String TMDB_AUTHOR = "author";
+        final String TMDB_CONTENT = "content";
+        String movieReviewAuthor = "";
+        String movieReviewContent = "";
+
+        try {
+            // Create a base JSONObject
+            JSONObject movieJSON = new JSONObject(movieReviewsJSONString);
             // Extract the JSONArray associated with the key called "results"
-            JSONArray movieReviewResults = movieReviews.getJSONArray(TMDB_RESULTS);
+            JSONArray movieReviewResults = movieJSON.getJSONArray(TMDB_RESULTS);
             for(int j = 0; j < movieReviewResults.length(); j++) {
                 // Get a single movie review at position j within the list of movie reviews
                 JSONObject currentReview = movieReviewResults.getJSONObject(j);
                 // Extract the value for the key called "author"
-                if(currentReview.has(TMDB_AUTHOR)){
+                if (currentReview.has(TMDB_AUTHOR)) {
                     movieReviewAuthor = currentReview.getString(TMDB_AUTHOR);
                 }
                 // Extract the value for the key called "content"
-                if(currentReview.has(TMDB_CONTENT)){
+                if (currentReview.has(TMDB_CONTENT)) {
                     movieReviewContent = currentReview.getString(TMDB_CONTENT);
                 }
 
@@ -206,11 +220,11 @@ public class MovieUtils {
 
         } catch (JSONException e){
             e.printStackTrace();
-            Log.e(LOG_TAG, "Problem printing the single movie video JSON results ", e);
+            Log.e(LOG_TAG, "Problem printing the single movie reviews JSON results ", e);
         }
 
-        // Return the list of movie trailers and movie reviews
-        return new MovieExtra(singleMovieTrailers, singleMovieReviews);
+        // Return the list of movie reviews
+        return singleMovieReviews;
     }
 
 }

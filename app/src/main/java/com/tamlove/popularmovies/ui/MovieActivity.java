@@ -2,6 +2,7 @@ package com.tamlove.popularmovies.ui;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Paint;
 import android.net.Uri;
@@ -31,6 +32,7 @@ import com.tamlove.popularmovies.utilities.QueryUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MovieActivity extends AppCompatActivity implements MovieTrailerAdapterOnClickHandler {
 
@@ -42,6 +44,8 @@ public class MovieActivity extends AppCompatActivity implements MovieTrailerAdap
     public static final String MOVIE_DATE = "date";
     public static final int MOVIE_POSTER_WIDTH = 360;
     public static final int MOVIE_POSTER_HEIGHT = 520;
+    public static final String MOVIE_URL_PATH_TRAILERS = "videos";
+    public static final String MOVIE_URL_PATH_REVIEWS = "reviews";
 
     private TextView mTitleTextView;
     private TextView mSynopsisHeadingTextView;
@@ -136,6 +140,11 @@ public class MovieActivity extends AppCompatActivity implements MovieTrailerAdap
         mMovieExtrasErrorTextView.setVisibility(View.GONE);
         /* Call the AsyncTask to fetch trailers and reviews for a single movie */
         new FetchMovieExtrasTask().execute(movieId);
+
+        if(movieMarkedAsFavourite()){
+            mfavFab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPanelBackground)));
+            mfavFab.setImageResource(R.drawable.favourite_solid);
+        }
 
         mfavFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -258,6 +267,8 @@ public class MovieActivity extends AppCompatActivity implements MovieTrailerAdap
 
             Uri uri = getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, contentValues);
             if (uri != null) {
+                mfavFab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPanelBackground)));
+                mfavFab.setImageResource(R.drawable.favourite_solid);
                 Toast.makeText(getBaseContext(), getString(R.string.favourite_added, movieTitle), Toast.LENGTH_LONG).show();
             }
         } else {
@@ -272,6 +283,8 @@ public class MovieActivity extends AppCompatActivity implements MovieTrailerAdap
             String[] selectionArgs = {movieId};
             int rowsDeleted = getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI, selection, selectionArgs);
             if (rowsDeleted != 0) {
+                mfavFab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+                mfavFab.setImageResource(R.drawable.favourite);
                 Toast.makeText(getBaseContext(), getString(R.string.favourite_removed, movieTitle), Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(getBaseContext(), getString(R.string.favourite_removing_error), Toast.LENGTH_LONG).show();
@@ -338,12 +351,15 @@ public class MovieActivity extends AppCompatActivity implements MovieTrailerAdap
             }
 
             String singleMovieId = params[0];
-            URL movieExtrasUrl = QueryUtils.buildSingleMovieURL(singleMovieId);
+            URL movieTrailersUrl = QueryUtils.buildSingleMovieURL(singleMovieId, MOVIE_URL_PATH_TRAILERS);
+            URL movieReviewsUrl = QueryUtils.buildSingleMovieURL(singleMovieId, MOVIE_URL_PATH_REVIEWS);
 
             try {
-                String jsonMovieExtrasResponse = QueryUtils.getResponseFromHttpUrl(movieExtrasUrl);
-                MovieExtra jsonMovieExtraData = MovieUtils.getSingleMovieFromJSON(jsonMovieExtrasResponse);
-                return jsonMovieExtraData;
+                String jsonMovieTrailersResponse = QueryUtils.getResponseFromHttpUrl(movieTrailersUrl);
+                String jsonMovieReviewsResponse = QueryUtils.getResponseFromHttpUrl(movieReviewsUrl);
+                List<MovieTrailer> jsonMovieTrailerData = MovieUtils.getMovieTrailersFromJSON(jsonMovieTrailersResponse);
+                List<MovieReview> jsonMovieReviewData = MovieUtils.getMovieReviewsFromJSON(jsonMovieReviewsResponse);
+                return new MovieExtra(jsonMovieTrailerData, jsonMovieReviewData);
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;

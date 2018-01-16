@@ -23,9 +23,6 @@ public class QueryUtils {
     private static final String key = "";
     private static final String API_KEY = "api_key";
 
-    private static final String append_items = "videos,reviews";
-    private static final String APPEND_TO_RESPONSE = "append_to_response";
-
     /**
      * Builds the URL used to talk to themoviedb using a sort type.
      *
@@ -52,11 +49,11 @@ public class QueryUtils {
      * @param id The id of the single movie.
      * @return The URL to use to query themoviedb API for single movie details.
      */
-    public static URL buildSingleMovieURL(String id){
+    public static URL buildSingleMovieURL(String id, String extra){
         Uri builtUri = Uri.parse(MOVIE_DATABASE_BASE_URL).buildUpon()
                 .appendPath(id)
+                .appendPath(extra)
                 .appendQueryParameter(API_KEY, key)
-                .appendQueryParameter(APPEND_TO_RESPONSE, append_items)
                 .build();
         URL url = null;
         try{
