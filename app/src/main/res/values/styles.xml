@@ -9,4 +9,40 @@
 
     </style>
 
+    <style name="MovieExtraText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/secondary_text_size</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="MovieHeadingText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/primary_text_size</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:textAllCaps">true</item>
+
+    </style>
+
+    <style name="MovieExtraHeadingText" parent="MovieHeadingText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:layout_marginBottom">@dimen/medium</item>
+        <item name="android:layout_marginEnd">@dimen/medium</item>
+        <item name="android:layout_marginLeft">@dimen/medium</item>
+        <item name="android:layout_marginRight">@dimen/medium</item>
+        <item name="android:layout_marginStart">@dimen/medium</item>
+        <item name="android:layout_marginTop">@dimen/medium</item>
+    </style>
+
+    <style name="MovieErrorText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
 </resources>

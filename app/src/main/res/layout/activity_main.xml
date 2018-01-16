@@ -13,14 +13,11 @@
 
     <TextView
         android:id="@+id/error_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        style="@style/MovieErrorText"
         android:layout_margin="@dimen/medium"
         android:fontFamily="sans-serif-condensed"
         android:text="@string/error_message"
         android:textAllCaps="true"
-        android:textColor="@android:color/white"
         android:textSize="@dimen/primary_text_size"
         android:visibility="invisible" />
 

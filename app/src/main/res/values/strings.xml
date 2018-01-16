@@ -1,20 +1,31 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Popular Movies</string>
 
+    <!-- Sort Types -->
     <string name="popular">Popularity</string>
     <string name="rated">Top Rated</string>
     <string name="favourite">Favourite</string>
 
+    <!-- Accessibility -->
     <string name="movie_poster_desc">Movie Poster</string>
     <string name="movie_stars_desc">Movie Star Rating</string>
+    <string name="movie_trailer_play_icon_desc">Movie Trailer Play Icon</string>
 
+    <!-- Errors -->
     <string name="error_message">No Movies Available</string>
     <string name="trailer_error_message">No Trailers Available</string>
     <string name="review_error_message">No Reviews Available</string>
+    <string name="favourite_adding_error">Error adding movie to Favourites</string>
+    <string name="favourite_removing_error">Error removing movie from Favourites</string>
 
+    <!-- Movie Headings -->
     <string name="date">Release Date</string>
     <string name="rating">Rating</string>
     <string name="synopsis">Synopsis</string>
     <string name="trailers">Trailers</string>
     <string name="reviews">Reviews</string>
+
+    <!-- Adding / Removing Favourites -->
+    <string name="favourite_added">Added <xliff.g id="titleAdd" example="Blade Runner">%s</xliff.g> to Favourites</string>
+    <string name="favourite_removed">Removed <xliff.g id="titleRemove" example="Blade Runner">%s</xliff.g> from Favourites</string>
 </resources>

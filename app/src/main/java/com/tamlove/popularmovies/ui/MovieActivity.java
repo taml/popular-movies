@@ -94,7 +94,7 @@ public class MovieActivity extends AppCompatActivity implements MovieTrailerAdap
 
         if (movieItemIntent != null) {
 
-            if(movieItemIntent.hasExtra(MOVIE_ID)) {
+            if (movieItemIntent.hasExtra(MOVIE_ID)) {
                 movieId = movieItemIntent.getStringExtra(MOVIE_ID);
             }
 
@@ -104,22 +104,22 @@ public class MovieActivity extends AppCompatActivity implements MovieTrailerAdap
                 setTitle(movieTitle);
             }
 
-            if(movieItemIntent.hasExtra(MOVIE_SYNOPSIS)) {
+            if (movieItemIntent.hasExtra(MOVIE_SYNOPSIS)) {
                 movieSynopsis = movieItemIntent.getStringExtra(MOVIE_SYNOPSIS);
                 mSynopsisTextView.setText(movieSynopsis);
             }
 
-            if(movieItemIntent.hasExtra(MOVIE_URL)) {
+            if (movieItemIntent.hasExtra(MOVIE_URL)) {
                 moviePosterUrl = movieItemIntent.getStringExtra(MOVIE_URL);
                 displayMoviePoster(moviePosterUrl);
             }
 
-            if(movieItemIntent.hasExtra(MOVIE_DATE)){
+            if (movieItemIntent.hasExtra(MOVIE_DATE)) {
                 movieReleaseDate = movieItemIntent.getStringExtra(MOVIE_DATE);
                 mDateTextView.setText(movieReleaseDate);
             }
 
-            if(movieItemIntent.hasExtra(MOVIE_RATING)){
+            if (movieItemIntent.hasExtra(MOVIE_RATING)) {
                 movieRating = movieItemIntent.getDoubleExtra(MOVIE_RATING, 0.0);
                 /* Divide rating by 2, so it can be out of 5 stars instead of 10 */
                 movieRatingHalved = movieRating;
@@ -140,7 +140,7 @@ public class MovieActivity extends AppCompatActivity implements MovieTrailerAdap
         mfavFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(movieMarkedAsFavourite()){
+                if (movieMarkedAsFavourite()) {
                     deleteMovieFromFavourites();
                 } else {
                     addMovieToFavourites();
@@ -154,8 +154,8 @@ public class MovieActivity extends AppCompatActivity implements MovieTrailerAdap
      *
      * @param moviePosterUrl A string url to display the poster using Picasso
      */
-    public void displayMoviePoster(String moviePosterUrl){
-        if(!TextUtils.isEmpty(moviePosterUrl)) {
+    public void displayMoviePoster(String moviePosterUrl) {
+        if (!TextUtils.isEmpty(moviePosterUrl)) {
             Picasso.with(MovieActivity.this).load(moviePosterUrl)
                     .resize(MOVIE_POSTER_WIDTH, MOVIE_POSTER_HEIGHT)
                     .centerCrop().placeholder(R.drawable.poster)
@@ -165,12 +165,13 @@ public class MovieActivity extends AppCompatActivity implements MovieTrailerAdap
         }
     }
 
+    /* Play movie trailers in YouTube App or Browser if either are available */
     @Override
     public void onClick(MovieTrailer movieItem) {
         Uri movieTrailerUrl = Uri.parse(movieItem.getMovieTrailerKey());
         Intent playTrailerIntent = new Intent(Intent.ACTION_VIEW);
         playTrailerIntent.setData(movieTrailerUrl);
-        if(playTrailerIntent.resolveActivity(getPackageManager()) != null) {
+        if (playTrailerIntent.resolveActivity(getPackageManager()) != null) {
             startActivity(playTrailerIntent);
         }
     }
@@ -188,7 +189,7 @@ public class MovieActivity extends AppCompatActivity implements MovieTrailerAdap
     /* When Trailers TextView is selected only underline the Trailers heading and hide Review and Synopsis content */
     public void trailersSelected(View view) {
         mTrailersHeadingTextView.setPaintFlags(mTrailersHeadingTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        if(isTrailerError) {
+        if (isTrailerError) {
             mMovieExtrasErrorTextView.setText(getString(R.string.trailer_error_message));
             mMovieExtrasErrorTextView.setVisibility(View.VISIBLE);
             mMovieExtrasRecyclerView.setVisibility(View.GONE);
@@ -205,7 +206,7 @@ public class MovieActivity extends AppCompatActivity implements MovieTrailerAdap
     /* When Reviews TextView is selected only underline the Reviews heading and hide Trailers and Synopsis content */
     public void reviewsSelected(View view) {
         mReviewsHeadingTextView.setPaintFlags(mReviewsHeadingTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        if(isReviewError){
+        if (isReviewError) {
             mMovieExtrasErrorTextView.setText(getString(R.string.review_error_message));
             mMovieExtrasErrorTextView.setVisibility(View.VISIBLE);
             mMovieExtrasRecyclerView.setVisibility(View.GONE);
@@ -219,36 +220,13 @@ public class MovieActivity extends AppCompatActivity implements MovieTrailerAdap
         mTrailersHeadingTextView.setPaintFlags(0);
     }
 
-    /* enum RATING to apply the star rating a double should have. If rating is 3.6 rating will be
-     * rounded up so that a 4 star image can be displayed. If rating is 3.4 rating will be rounded
-     * down so that a 3 star image can be displayed. */
-    public enum RATING {
-        ONESTAR(0.0), TWOSTARS(1.5), THREESTARS(2.5), FOURSTARS(3.5), FIVESTARS(4.5);
-
-        private final double mRatingValue;
-
-        RATING(double starRating){
-            mRatingValue = starRating;
-        }
-
-        public static RATING getRating(double movieRating){
-            RATING rated = ONESTAR;
-            for(RATING rating : values()){
-                if(rating.mRatingValue <= movieRating){
-                    rated = rating;
-                }
-            }
-            return rated;
-        }
-    }
-
     /**
      * Set right image based on RATING value
      *
      * @param rating A RATING obtained from checking a double rating against an enum RATING
      */
-    private void displayRatingStars(RATING rating){
-        switch(rating){
+    private void displayRatingStars(RATING rating) {
+        switch (rating) {
             case ONESTAR:
                 mRatingImageView.setImageResource(R.drawable.onestar);
                 break;
@@ -267,6 +245,89 @@ public class MovieActivity extends AppCompatActivity implements MovieTrailerAdap
         }
     }
 
+    /* Add a movie to favourites database */
+    private void addMovieToFavourites() {
+        if (!(movieId.equals("") || movieTitle.equals(""))) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movieId);
+            contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE, movieTitle);
+            contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_SYNOPSIS, movieSynopsis);
+            contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_URL, moviePosterUrl);
+            contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_DATE, movieReleaseDate);
+            contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_RATING, movieRating);
+
+            Uri uri = getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, contentValues);
+            if (uri != null) {
+                Toast.makeText(getBaseContext(), getString(R.string.favourite_added, movieTitle), Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(getBaseContext(), getString(R.string.favourite_adding_error), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /* Delete a movie from favourites database */
+    private void deleteMovieFromFavourites() {
+        if (!(movieId.equals(""))) {
+            String selection = MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?";
+            String[] selectionArgs = {movieId};
+            int rowsDeleted = getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI, selection, selectionArgs);
+            if (rowsDeleted != 0) {
+                Toast.makeText(getBaseContext(), getString(R.string.favourite_removed, movieTitle), Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getBaseContext(), getString(R.string.favourite_removing_error), Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(getBaseContext(), getString(R.string.favourite_removing_error), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * This method checks whether a movie exists in the favourites database by querying the movie ID (not database row ID)
+     *
+     * @return true or false depending on if the movie is already in the database
+     */
+    private boolean movieMarkedAsFavourite() {
+        Cursor cursor = getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, null, null, null, null);
+        String favouriteMovieId = "";
+        if (cursor == null) {
+            return false;
+        } else if (cursor.getCount() < 1) {
+            cursor.close();
+            return false;
+        }
+        while (cursor.moveToNext()) {
+            favouriteMovieId = cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID));
+            if (favouriteMovieId.equals(movieId) && !favouriteMovieId.equals("")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /* enum RATING to apply the star rating a double should have. If rating is 3.6 rating will be
+     * rounded up so that a 4 star image can be displayed. If rating is 3.4 rating will be rounded
+     * down so that a 3 star image can be displayed. */
+    public enum RATING {
+        ONESTAR(0.0), TWOSTARS(1.5), THREESTARS(2.5), FOURSTARS(3.5), FIVESTARS(4.5);
+
+        private final double mRatingValue;
+
+        RATING(double starRating) {
+            mRatingValue = starRating;
+        }
+
+        public static RATING getRating(double movieRating) {
+            RATING rated = ONESTAR;
+            for (RATING rating : values()) {
+                if (rating.mRatingValue <= movieRating) {
+                    rated = rating;
+                }
+            }
+            return rated;
+        }
+    }
+
+    /* Fetch trailers and reviews data */
     public class FetchMovieExtrasTask extends AsyncTask<String, Void, MovieExtra> {
 
         @Override
@@ -283,7 +344,7 @@ public class MovieActivity extends AppCompatActivity implements MovieTrailerAdap
                 String jsonMovieExtrasResponse = QueryUtils.getResponseFromHttpUrl(movieExtrasUrl);
                 MovieExtra jsonMovieExtraData = MovieUtils.getSingleMovieFromJSON(jsonMovieExtrasResponse);
                 return jsonMovieExtraData;
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
                 return null;
             }
@@ -291,69 +352,17 @@ public class MovieActivity extends AppCompatActivity implements MovieTrailerAdap
 
         @Override
         protected void onPostExecute(MovieExtra movieExtras) {
-            if(movieExtras.getMovieTrailer() == null || movieExtras.getMovieTrailer().isEmpty()){
+            if (movieExtras.getMovieTrailer() == null || movieExtras.getMovieTrailer().isEmpty()) {
                 isTrailerError = true;
             } else {
                 movieTrailerAdapter.setMovieTrailersData(movieExtras.getMovieTrailer());
             }
-            if(movieExtras.getMovieReview() == null || movieExtras.getMovieReview().isEmpty()){
+            if (movieExtras.getMovieReview() == null || movieExtras.getMovieReview().isEmpty()) {
                 isReviewError = true;
             } else {
                 movieReviewAdapter.setMoviesReviewData(movieExtras.getMovieReview());
             }
         }
-    }
-
-    private void addMovieToFavourites(){
-        if(!(movieId.equals("") || movieTitle.equals(""))) {
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movieId);
-            contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE, movieTitle);
-            contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_SYNOPSIS, movieSynopsis);
-            contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_URL, moviePosterUrl);
-            contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_DATE, movieReleaseDate);
-            contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_RATING, movieRating);
-
-            Uri uri = getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, contentValues);
-            if (uri != null) {
-                Toast.makeText(getBaseContext(), "Added " + movieTitle + " to Favourites", Toast.LENGTH_LONG).show();
-            }
-        } else {
-            Toast.makeText(getBaseContext(), "Error adding movie to Favourites", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private void deleteMovieFromFavourites() {
-        if(!(movieId.equals(""))) {
-            String selection = MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?";
-            String[] selectionArgs = {movieId};
-            int rowsDeleted = getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI, selection, selectionArgs);
-            if (rowsDeleted != 0) {
-                Toast.makeText(getBaseContext(), "Removed " + movieTitle + " from Favourites", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(getBaseContext(), "Error removing movie from Favourites", Toast.LENGTH_LONG).show();
-            }
-        } else {
-            Toast.makeText(getBaseContext(), "Error removing movie from Favourites", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private boolean movieMarkedAsFavourite() {
-        Cursor cursor = getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, null, null, null, null);
-        String favouriteMovieId = "";
-        if (cursor == null) {
-            return false;
-        } else if(cursor.getCount() < 1){
-            cursor.close();
-            return false;
-        }
-        while(cursor.moveToNext()){
-            favouriteMovieId = cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID));
-            if(favouriteMovieId.equals(movieId) && !favouriteMovieId.equals("")){
-                return true;
-            }
-        }
-        return false;
     }
 
 }

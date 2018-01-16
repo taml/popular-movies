@@ -1,28 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/review_content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/medium"
+        style="@style/MovieExtraText"
+        android:layout_marginBottom="@dimen/xsmall"
         android:layout_marginLeft="@dimen/medium"
         android:layout_marginRight="@dimen/medium"
-        android:layout_marginBottom="@dimen/xsmall"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/secondary_text_size" />
+        android:layout_marginTop="@dimen/medium" />
 
     <TextView
         android:id="@+id/review_author"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/MovieExtraText"
         android:layout_margin="@dimen/medium"
         android:paddingBottom="@dimen/small"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:textSize="@dimen/secondary_text_size" />
+        android:textStyle="bold" />
 
 </LinearLayout>

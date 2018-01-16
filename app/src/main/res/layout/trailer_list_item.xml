@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
     <ImageView
-        android:src="@drawable/play_icon"
-        android:layout_margin="@dimen/medium"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/medium"
+        android:contentDescription="@string/movie_trailer_play_icon_desc"
+        android:src="@drawable/play_icon" />
 
     <TextView
         android:id="@+id/trailer_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/MovieExtraText"
         android:layout_margin="@dimen/medium"
-        android:paddingTop="@dimen/xsmall"
         android:paddingBottom="@dimen/small"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:textSize="@dimen/secondary_text_size" />
+        android:paddingTop="@dimen/xsmall"
+        android:textStyle="bold" />
 
 </LinearLayout>
